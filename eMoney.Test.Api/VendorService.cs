@@ -4,21 +4,28 @@ using System.Text;
 
 namespace eMoney.Test.Api
 {
-    public class VendorService
+
+    public interface IVendorService
     {
+        Task<ResponseOfArrayOfParameter> GetInfoAsync();
+    }
+    public class VendorService : IVendorService
+    {
+        private const string Distributor = "TESTER";
+        private const string Secret = "5PSSDCRF5GWMB2PULJ3H";
 
         public async Task<ResponseOfArrayOfParameter> GetInfoAsync()
         {
             using (var client = new ServiceClient())
             {
                 var request = new Request();
-                request.Distributor = "DISTRIBUTOR";
+                request.Distributor = Distributor;
                 var serviceID = "1";
-                var customerCode = " 369362582"; // ან მომხმარებლის ელფოსტა customerCode = " test@test.com";
+                var customerCode = "360806773"; // ან მომხმარებლის ელფოსტა customerCode = " test@test.com";
                 //var description = “Some Optional description, user can enter”;
-                request.Hash = string.Format("{0}{1}{2}{3}", "GetInfo", serviceID, "DISTRIBUTOR", "SECRET_KEY");
+                request.Hash = ComputeHash(string.Format("{0}{1}{2}{3}", "GetInfo", serviceID, Distributor, Secret));
                 // Optional. თუ ეს პარამეტრი გადმოცემულია მოხდება ისეთი მომხმარებლების ძიება ვისაც აქვს eMoney-ში იგივე პირადობის ნომერი რაც შეყვანილი და მომხმარებელი ვერიფიცირებულია. სხვა შემთხვევაში ბრუნდება შეცდომა Code 47
-                string verificationPinHash = string.Format("{0}{1}{2}{3}", "GetInfo", "user_private_numer_from_your_system", "DISTRIBUTOR", "SECRET_KEY");
+                string verificationPinHash = ComputeHash(string.Format("{0}{1}{2}{3}", "GetInfo", serviceID, Distributor, Secret));
                 request.Parameters = new Parameter[]
                 {
                     new Parameter { Key = "verificationpin", Value = verificationPinHash },

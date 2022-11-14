@@ -1,3 +1,4 @@
+using EmoneyService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eMoney.Test.Api.Controllers
@@ -6,28 +7,19 @@ namespace eMoney.Test.Api.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
+        private readonly IVendorService _vendorService;
 
-        private readonly ILogger<WeatherForecastController> _logger;
-
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(IVendorService vendorService)
         {
-            _logger = logger;
+            _vendorService = vendorService;
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        [HttpGet("test")]
+        public async Task<ResponseOfArrayOfParameter> TestAsync()
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+           return await _vendorService.GetInfoAsync();
+
         }
+
     }
 }

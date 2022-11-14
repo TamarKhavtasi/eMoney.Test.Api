@@ -21,5 +21,19 @@ namespace eMoney.Test.Api.Controllers
 
         }
 
+        [HttpPost("Pay")]
+        public async Task<ResponseOfTransaction> PayAsync()
+        {
+            return await _vendorService.PayAsync();
+        }
+
+        [HttpPost("GetTransactionInfo")]
+        public async Task<ResponseOfTransaction> GetTransactionInfoAsync()
+        {
+            var payResponse = await _vendorService.PayAsync();
+            var transactionCode = payResponse.Value.Code;
+            return await _vendorService.GetTransactionInfoAsync(transactionCode.ToString());
+        }
+
     }
 }
